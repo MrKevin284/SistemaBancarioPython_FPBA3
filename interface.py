@@ -1,168 +1,161 @@
 import tkinter as tk
-import tkinter.simpledialog
-from banco import *
+from tkinter import messagebox
+from funcoes import *
 
-class InterfaceBanco:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Sistema Bancário")
-        self.usuario_logado = None
-
-        # Variáveis para armazenar os valores do Entry
-        self.cpf_var = tk.StringVar()
-        self.nome_var = tk.StringVar()
-
-        # Label e Entry para CPF
-        self.label_cpf = tk.Label(root, text="CPF:")
-        self.label_cpf.pack()
-        self.entry_cpf = tk.Entry(root, textvariable=self.cpf_var)
-        self.entry_cpf.pack()
-
-        # Label e Entry para Nome
-        self.label_nome = tk.Label(root, text="Nome:")
-        self.label_nome.pack()
-        self.entry_nome = tk.Entry(root, textvariable=self.nome_var)
-        self.entry_nome.pack()
-
-        # Botão de login
-        self.botao_login = tk.Button(root, text="Login", command=self.login)
-        self.botao_login.pack()
-
-        # Label para exibir mensagem de erro
-        self.label_erro = tk.Label(root, text="", fg="red")
-        self.label_erro.pack()
-
-        # Botão para ir para a tela de cadastro
-        self.botao_cadastro = tk.Button(root, text="Cadastrar", command=self.abrir_tela_cadastro)
-        self.botao_cadastro.pack()
-
-    def mostrar_mensagem(self, mensagem):
-        mensagem_box = tk.Toplevel(self.root)
-        mensagem_box.title("Mensagem")
-        mensagem_label = tk.Label(mensagem_box, text=mensagem)
-        mensagem_label.pack()
-        ok_button = tk.Button(mensagem_box, text="OK", command=mensagem_box.destroy)
-        ok_button.pack()
-
-    def tela_principal(self):
-        self.limpar_tela()
-
-        # Label para exibir informações do usuário
-        if self.usuario_logado:
-            nome = self.usuario_logado['nome']
-            cpf = self.usuario_logado['cpf']
-            saldo = self.usuario_logado['saldo']
-            agencia = self.usuario_logado['agencia']
-
-            info_label = tk.Label(self.root, text=f"Nome: {nome}\nCPF: {cpf}\nSaldo: R$ {saldo:.2f}\nAgência: {agencia}")
-            info_label.pack()
-
-            # Botões para realizar operações
-            self.botao_saque = tk.Button(self.root, text="Realizar Saque", command=self.realizar_saque)
-            self.botao_saque.pack()
-
-            self.botao_deposito = tk.Button(self.root, text="Realizar Depósito", command=self.realizar_deposito)
-            self.botao_deposito.pack()
-
-            self.botao_consultar_saldo = tk.Button(self.root, text="Consultar Saldo", command=self.consultar_saldo)
-            self.botao_consultar_saldo.pack()
-
-            self.botao_logout = tk.Button(self.root, text="Logout", command=self.logout)
-            self.botao_logout.pack()
-
-        else:
-            self.mostrar_mensagem("Este login não possui um cadastro.")
-
-    def limpar_tela(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-
-    def login(self):
-        cpf = self.cpf_var.get()
-        nome = self.nome_var.get()
-
-        # Verifique se o usuário existe na lista de usuários
-        usuario = next((usuario for usuario in usuarios if usuario["cpf"] == cpf and usuario["nome"] == nome), None)
-
-        if usuario:
-            self.usuario_logado = usuario
-            self.tela_principal()
-        else:
-            self.label_erro.config(text="Login ou senha incorretos.")
-
-    def abrir_tela_cadastro(self):
-        self.limpar_tela()
-        self.botao_cadastro.pack_forget()
-        self.botao_login.pack_forget()
-
-        # Adicione aqui a interface para cadastro (labels, entries e botão de cadastrar)
-        # Exemplo:
-        # self.label_cadastro = tk.Label(self.root, text="Preencha os campos abaixo para se cadastrar:")
-        # self.label_cadastro.pack()
-
-        # self.label_nome_cadastro = tk.Label(self.root, text="Nome:")
-        # self.label_nome_cadastro.pack()
-        # self.entry_nome_cadastro = tk.Entry(self.root)
-        # self.entry_nome_cadastro.pack()
-
-        # self.label_cpf_cadastro = tk.Label(self.root, text="CPF:")
-        # self.label_cpf_cadastro.pack()
-        # self.entry_cpf_cadastro = tk.Entry(self.root)
-        # self.entry_cpf_cadastro.pack()
-
-        # self.botao_cadastrar = tk.Button(self.root, text="Cadastrar", command=self.cadastrar)
-        # self.botao_cadastrar.pack()
-
-    # Implemente a função "cadastrar" para criar um novo usuário no banco
-
-    def logout(self):
-        self.usuario_logado = None
-        self.limpar_tela()
-        self.cpf_var.set("")
-        self.nome_var.set("")
-        self.botao_login.pack()
-        self.label_erro.config(text="")
+# Função para atualizar informações do usuário
+def atualizar_informacoes():
+    cpf = entry_cpf.get()
+    conta = next((conta for conta in contas if conta["usuario"]["cpf"] == cpf), None)
     
-    def realizar_saque(self):
-        if self.usuario_logado:
-            # Obtém o valor do saque a partir de uma caixa de diálogo
-            valor_saque = float(tk.simpledialog.askstring("Saque", "Informe o valor do saque:"))
-            
-            if valor_saque <= 0:
-                self.mostrar_mensagem("Operação falhou! O valor informado é inválido.")
-            elif valor_saque > self.usuario_logado['saldo']:
-                self.mostrar_mensagem("Operação falhou! Você não tem saldo suficiente.")
-            else:
-                # Atualiza o saldo e o extrato do usuário
-                self.usuario_logado['saldo'] -= valor_saque
-                self.usuario_logado['extrato'].append(f"Saque: R$ {valor_saque:.2f}")
+    if conta is not None:
+        nome_usuario.set(f"Nome: {conta['usuario']['nome']}")
+        saldo_conta.set(f"Saldo: R$ {conta['saldo']:.2f}")
+        limite_conta.set(f"Limite: R$ {conta['limite']:.2f}")
+        numero_conta.set(f"Número da Conta: {conta['numero_conta']}")
+        agencia_conta.set(f"Agência: {conta['agencia']}")
+        mostrar_opcoes()
+        tela_login_frame.grid_forget()
+    else:
+        esconder_opcoes()
+        messagebox.showinfo("Erro", "Conta não encontrada.")
 
-                self.mostrar_mensagem(f"Saque de R$ {valor_saque:.2f} realizado com sucesso!")
+# Função para mostrar opções de funcionalidade
+def mostrar_opcoes():
+    botoes_opcoes_frame.grid(row=1, column=0, padx=20, pady=10)
+    botao_logout.grid(row=2, column=0, padx=20, pady=10)
 
-    def realizar_deposito(self):
-        if self.usuario_logado:
-            # Obtém o valor do depósito a partir de uma caixa de diálogo
-            valor_deposito = float(tk.simpledialog.askstring("Depósito", "Informe o valor do depósito:"))
-            
-            if valor_deposito <= 0:
-                self.mostrar_mensagem("Operação falhou! O valor informado é inválido.")
-            else:
-                # Atualiza o saldo e o extrato do usuário
-                self.usuario_logado['saldo'] += valor_deposito
-                self.usuario_logado['extrato'].append(f"Depósito: R$ {valor_deposito:.2f}")
+# Função para esconder opções de funcionalidade
+def esconder_opcoes():
+    botoes_opcoes_frame.grid_forget()
+    botao_logout.grid_forget()
 
-                self.mostrar_mensagem(f"Depósito de R$ {valor_deposito:.2f} realizado com sucesso!")
+# Função para realizar logout
+def logout():
+    entry_cpf.delete(0, tk.END)
+    entry_cpf.focus()
+    nome_usuario.set("")
+    saldo_conta.set("")
+    limite_conta.set("")
+    numero_conta.set("")
+    agencia_conta.set("")
+    esconder_opcoes()
+    tela_login_frame.grid(row=1, column=0, padx=20, pady=10)
 
-    def consultar_saldo(self):
-        if self.usuario_logado:
-            saldo = self.usuario_logado['saldo']
-            extrato = "\n".join(self.usuario_logado['extrato'])
+# Função para abrir a tela de criar conta
+def abrir_criar_conta():
+    criar_conta_frame.grid(row=1, column=0, padx=20, pady=10)
+    tela_login_frame.grid_forget()
+    entry_nome.delete(0, tk.END)
+    entry_data_nascimento.delete(0, tk.END)
+    entry_cpf_criar.delete(0, tk.END)
+    entry_cep.delete(0, tk.END)
 
-            mensagem = f"Saldo: R$ {saldo:.2f}\n\nExtrato:\n{extrato}"
-            self.mostrar_mensagem(mensagem)
+# Função para cadastrar usuário e criar conta corrente
+def cadastrar_usuario_e_criar_conta():
+    nome = entry_nome.get()
+    data_nascimento = entry_data_nascimento.get()
+    cpf = entry_cpf_criar.get()
+    cep = entry_cep.get()
+    
+    resultado = cadastrar_usuario(nome, data_nascimento, cpf, cep)
+    
+    if resultado == "Usuário cadastrado com sucesso!":
+        criar_conta_corrente(cpf)
+        criar_conta_frame.grid_forget()
+        tela_login_frame.grid(row=1, column=0, padx=20, pady=10)
+        entry_cpf.delete(0, tk.END)
+        entry_cpf.focus()
+    else:
+        messagebox.showinfo("Erro", resultado)
 
+# Criar janela principal
+janela = tk.Tk()
+janela.title("Sistema Bancário")
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = InterfaceBanco(root)
-    root.mainloop()
+# Frame para a tela de login
+tela_login_frame = tk.Frame(janela)
+tela_login_frame.grid(row=1, column=0, padx=20, pady=10)
+
+# Frame para a tela de criar conta
+criar_conta_frame = tk.Frame(janela)
+
+# Frame para mostrar as opções de funcionalidade
+botoes_opcoes_frame = tk.Frame(janela)
+
+# Variáveis de controle
+nome_usuario = tk.StringVar()
+saldo_conta = tk.StringVar()
+limite_conta = tk.StringVar()
+numero_conta = tk.StringVar()
+agencia_conta = tk.StringVar()
+
+# Campos de texto e rótulos
+label_cpf = tk.Label(tela_login_frame, text="CPF:")
+entry_cpf = tk.Entry(tela_login_frame)
+botao_entrar = tk.Button(tela_login_frame, text="Entrar", command=atualizar_informacoes)
+botao_criar_conta = tk.Button(tela_login_frame, text="Criar Conta", command=abrir_criar_conta)
+
+# Campos de texto e rótulos para criar conta
+label_nome = tk.Label(criar_conta_frame, text="Nome:")
+entry_nome = tk.Entry(criar_conta_frame)
+label_data_nascimento = tk.Label(criar_conta_frame, text="Data de Nascimento (DD-MM-YYYY):")
+entry_data_nascimento = tk.Entry(criar_conta_frame)
+label_cpf_criar = tk.Label(criar_conta_frame, text="CPF (XXX.XXX.XXX-XX):")
+entry_cpf_criar = tk.Entry(criar_conta_frame)
+label_cep = tk.Label(criar_conta_frame, text="CEP (XXXXX-XX):")
+entry_cep = tk.Entry(criar_conta_frame)
+botao_cadastrar = tk.Button(criar_conta_frame, text="Cadastrar", command=cadastrar_usuario_e_criar_conta)
+botao_voltar_criar = tk.Button(criar_conta_frame, text="Voltar", command=lambda: criar_conta_frame.grid_forget())
+
+# Botões de funcionalidade
+botao_saque = tk.Button(botoes_opcoes_frame, text="Realizar Saque", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Saque ainda não implementada."))
+botao_deposito = tk.Button(botoes_opcoes_frame, text="Realizar Depósito", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Depósito ainda não implementada."))
+botao_extrato = tk.Button(botoes_opcoes_frame, text="Exibir Extrato", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Extrato ainda não implementada."))
+botao_transferencia = tk.Button(botoes_opcoes_frame, text="Realizar Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Transferência ainda não implementada."))
+botao_atualizar_limite = tk.Button(botoes_opcoes_frame, text="Atualizar Limite de Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Atualização de Limite de Transferência ainda não implementada."))
+
+# Botão de logout
+botao_logout = tk.Button(janela, text="Logout", command=logout)
+
+# Posicionamento dos elementos na tela de login
+label_cpf.grid(row=0, column=0)
+entry_cpf.grid(row=0, column=1)
+botao_entrar.grid(row=1, column=0, columnspan=2, pady=10)
+botao_criar_conta.grid(row=2, column=0, columnspan=2)
+
+# Posicionamento dos elementos na tela de criar conta
+label_nome.grid(row=0, column=0)
+entry_nome.grid(row=0, column=1)
+label_data_nascimento.grid(row=1, column=0)
+entry_data_nascimento.grid(row=1, column=1)
+label_cpf_criar.grid(row=2, column=0)
+entry_cpf_criar.grid(row=2, column=1)
+label_cep.grid(row=3, column=0)
+entry_cep.grid(row=3, column=1)
+botao_cadastrar.grid(row=4, column=0, columnspan=2, pady=10)
+botao_voltar_criar.grid(row=5, column=0, columnspan=2, pady=10)
+
+# Posicionamento dos elementos na tela de informações do usuário
+info_usuario_label = tk.Label(janela, textvariable=nome_usuario)
+info_saldo_label = tk.Label(janela, textvariable=saldo_conta)
+info_limite_label = tk.Label(janela, textvariable=limite_conta)
+info_numero_conta_label = tk.Label(janela, textvariable=numero_conta)
+info_agencia_label = tk.Label(janela, textvariable=agencia_conta)
+
+info_usuario_label.grid(row=0, column=1, padx=10)
+info_saldo_label.grid(row=1, column=1, padx=10)
+info_limite_label.grid(row=2, column=1, padx=10)
+info_numero_conta_label.grid(row=3, column=1, padx=10)
+info_agencia_label.grid(row=4, column=1, padx=10)
+
+# Posicionamento dos botões de funcionalidade
+botao_saque.grid(row=0, column=0, padx=10, pady=5)
+botao_deposito.grid(row=0, column=1, padx=10, pady=5)
+botao_extrato.grid(row=0, column=2, padx=10, pady=5)
+botao_transferencia.grid(row=1, column=0, padx=10, pady=5)
+botao_atualizar_limite.grid(row=1, column=1, padx=10, pady=5)
+
+# Ocultar opções de funcionalidade inicialmente
+esconder_opcoes()
+
+janela.mainloop()
