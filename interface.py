@@ -68,6 +68,21 @@ def cadastrar_usuario_e_criar_conta():
     else:
         messagebox.showinfo("Erro", resultado)
 
+# Função para abrir a tela de saque
+def abrir_saque():
+    esconder_opcoes()
+    tela_saque_frame.grid(row=1, column=0, padx=20, pady=10)
+
+# Função para realizar saque
+def realizar_saque():
+    numero_conta_saque = entry_numero_conta_saque.get()
+    valor_saque = entry_valor_saque.get()
+
+    resultado = saque(numero_conta_saque, float(valor_saque))
+
+    messagebox.showinfo("Resultado", resultado)
+    abrir_saque()
+
 # Criar janela principal
 janela = tk.Tk()
 janela.title("Sistema Bancário")
@@ -78,6 +93,9 @@ tela_login_frame.grid(row=1, column=0, padx=20, pady=10)
 
 # Frame para a tela de criar conta
 criar_conta_frame = tk.Frame(janela)
+
+# Frame para a tela de saque
+tela_saque_frame = tk.Frame(janela)
 
 # Frame para mostrar as opções de funcionalidade
 botoes_opcoes_frame = tk.Frame(janela)
@@ -107,8 +125,16 @@ entry_cep = tk.Entry(criar_conta_frame)
 botao_cadastrar = tk.Button(criar_conta_frame, text="Cadastrar", command=cadastrar_usuario_e_criar_conta)
 botao_voltar_criar = tk.Button(criar_conta_frame, text="Voltar", command=lambda: criar_conta_frame.grid_forget())
 
+# Campos de texto e rótulos para saque
+label_numero_conta_saque = tk.Label(tela_saque_frame, text="Número da Conta:")
+entry_numero_conta_saque = tk.Entry(tela_saque_frame)
+label_valor_saque = tk.Label(tela_saque_frame, text="Valor do Saque:")
+entry_valor_saque = tk.Entry(tela_saque_frame)
+botao_confirmar_saque = tk.Button(tela_saque_frame, text="Confirmar Saque", command=realizar_saque)
+botao_voltar_saque = tk.Button(tela_saque_frame, text="Voltar", command=abrir_saque)
+
 # Botões de funcionalidade
-botao_saque = tk.Button(botoes_opcoes_frame, text="Realizar Saque", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Saque ainda não implementada."))
+botao_saque = tk.Button(botoes_opcoes_frame, text="Realizar Saque", command=abrir_saque)
 botao_deposito = tk.Button(botoes_opcoes_frame, text="Realizar Depósito", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Depósito ainda não implementada."))
 botao_extrato = tk.Button(botoes_opcoes_frame, text="Exibir Extrato", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Extrato ainda não implementada."))
 botao_transferencia = tk.Button(botoes_opcoes_frame, text="Realizar Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Transferência ainda não implementada."))
@@ -134,6 +160,14 @@ label_cep.grid(row=3, column=0)
 entry_cep.grid(row=3, column=1)
 botao_cadastrar.grid(row=4, column=0, columnspan=2, pady=10)
 botao_voltar_criar.grid(row=5, column=0, columnspan=2, pady=10)
+
+# Posicionamento dos elementos na tela de saque
+label_numero_conta_saque.grid(row=0, column=0)
+entry_numero_conta_saque.grid(row=0, column=1)
+label_valor_saque.grid(row=1, column=0)
+entry_valor_saque.grid(row=1, column=1)
+botao_confirmar_saque.grid(row=2, column=0, columnspan=2, pady=10)
+botao_voltar_saque.grid(row=3, column=0, columnspan=2, pady=10)
 
 # Posicionamento dos elementos na tela de informações do usuário
 info_usuario_label = tk.Label(janela, textvariable=nome_usuario)
