@@ -44,7 +44,7 @@ def logout():
 # Função para abrir a tela de criar conta
 def abrir_criar_conta():
     criar_conta_frame.grid(row=1, column=0, padx=20, pady=10)
-    tela_login_frame.grid_forget()
+    tela_login_frame.grid_forget()  # Ocultar a tela de login
     entry_nome.delete(0, tk.END)
     entry_data_nascimento.delete(0, tk.END)
     entry_cpf_criar.delete(0, tk.END)
@@ -82,6 +82,38 @@ def realizar_saque():
 
     messagebox.showinfo("Resultado", resultado)
     abrir_saque()
+    
+    # Função para abrir a tela de depósito
+# Função para abrir a tela de depósito
+def abrir_deposito():
+    esconder_opcoes()
+    tela_deposito_frame.grid(row=1, column=0, padx=20, pady=10)
+    
+    # Função para realizar depósito
+def realizar_deposito():
+    numero_conta_deposito = entry_numero_conta_deposito.get()
+    valor_deposito = entry_valor_deposito.get()
+
+    resultado = deposito(numero_conta_deposito, float(valor_deposito))
+
+    messagebox.showinfo("Resultado", resultado)
+    abrir_deposito()
+    
+    # Função para abrir a tela de transferência
+def abrir_transferencia():
+    esconder_opcoes()
+    tela_transferencia_frame.grid(row=1, column=0, padx=20, pady=10)
+
+# Função para realizar transferência
+def realizar_transferencia():
+    numero_conta_origem = entry_numero_conta_origem.get()
+    numero_conta_destino = entry_numero_conta_destino.get()
+    valor_transferencia = entry_valor_transferencia.get()
+
+    resultado = transferencia(numero_conta_origem, numero_conta_destino, float(valor_transferencia))
+
+    messagebox.showinfo("Resultado", resultado)
+    abrir_transferencia()
 
 # Criar janela principal
 janela = tk.Tk()
@@ -96,6 +128,12 @@ criar_conta_frame = tk.Frame(janela)
 
 # Frame para a tela de saque
 tela_saque_frame = tk.Frame(janela)
+
+# Frame para a tela de depósito
+tela_deposito_frame = tk.Frame(janela)
+
+# Frame para a tela de transferências
+tela_transferencia_frame = tk.Frame(janela)
 
 # Frame para mostrar as opções de funcionalidade
 botoes_opcoes_frame = tk.Frame(janela)
@@ -123,7 +161,7 @@ entry_cpf_criar = tk.Entry(criar_conta_frame)
 label_cep = tk.Label(criar_conta_frame, text="CEP (XXXXX-XX):")
 entry_cep = tk.Entry(criar_conta_frame)
 botao_cadastrar = tk.Button(criar_conta_frame, text="Cadastrar", command=cadastrar_usuario_e_criar_conta)
-botao_voltar_criar = tk.Button(criar_conta_frame, text="Voltar", command=lambda: criar_conta_frame.grid_forget())
+botao_voltar_criar = tk.Button(criar_conta_frame, text="Voltar", command=lambda: (criar_conta_frame.grid_forget(), tela_login_frame.grid(row=1, column=0, padx=20, pady=10)))
 
 # Campos de texto e rótulos para saque
 label_numero_conta_saque = tk.Label(tela_saque_frame, text="Número da Conta:")
@@ -131,13 +169,31 @@ entry_numero_conta_saque = tk.Entry(tela_saque_frame)
 label_valor_saque = tk.Label(tela_saque_frame, text="Valor do Saque:")
 entry_valor_saque = tk.Entry(tela_saque_frame)
 botao_confirmar_saque = tk.Button(tela_saque_frame, text="Confirmar Saque", command=realizar_saque)
-botao_voltar_saque = tk.Button(tela_saque_frame, text="Voltar", command=abrir_saque)
+botao_voltar_saque = tk.Button(tela_saque_frame, text="Voltar", command=lambda: (tela_saque_frame.grid_forget(), mostrar_opcoes()))
+
+# Campos de texto e rótulos para realizar depósito
+label_numero_conta_deposito = tk.Label(tela_deposito_frame, text="Número da Conta:")
+entry_numero_conta_deposito = tk.Entry(tela_deposito_frame)
+label_valor_deposito = tk.Label(tela_deposito_frame, text="Valor do Depósito:")
+entry_valor_deposito = tk.Entry(tela_deposito_frame)
+botao_confirmar_deposito = tk.Button(tela_deposito_frame, text="Confirmar Depósito", command=realizar_deposito)
+botao_voltar_opcoes = tk.Button(tela_deposito_frame, text="Voltar", command=lambda: (tela_deposito_frame.grid_forget(),mostrar_opcoes()))
+
+# Campos de texto e rótulos para transferência
+label_numero_conta_origem = tk.Label(tela_transferencia_frame, text="Conta de Origem:")
+entry_numero_conta_origem = tk.Entry(tela_transferencia_frame)
+label_numero_conta_destino = tk.Label(tela_transferencia_frame, text="Conta de Destino:")
+entry_numero_conta_destino = tk.Entry(tela_transferencia_frame)
+label_valor_transferencia = tk.Label(tela_transferencia_frame, text="Valor da Transferência:")
+entry_valor_transferencia = tk.Entry(tela_transferencia_frame)
+botao_confirmar_transferencia = tk.Button(tela_transferencia_frame, text="Confirmar Transferência", command=realizar_transferencia)
+botao_voltar_transferencia = tk.Button(tela_transferencia_frame, text="Voltar", command=lambda: (tela_transferencia_frame.grid_forget(), mostrar_opcoes()))
 
 # Botões de funcionalidade
 botao_saque = tk.Button(botoes_opcoes_frame, text="Realizar Saque", command=abrir_saque)
-botao_deposito = tk.Button(botoes_opcoes_frame, text="Realizar Depósito", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Depósito ainda não implementada."))
+botao_deposito = tk.Button(botoes_opcoes_frame, text="Realizar Depósito", command=abrir_deposito)
 botao_extrato = tk.Button(botoes_opcoes_frame, text="Exibir Extrato", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Extrato ainda não implementada."))
-botao_transferencia = tk.Button(botoes_opcoes_frame, text="Realizar Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Transferência ainda não implementada."))
+botao_transferencia = tk.Button(botoes_opcoes_frame, text="Realizar Transferência", command=abrir_transferencia)
 botao_atualizar_limite = tk.Button(botoes_opcoes_frame, text="Atualizar Limite de Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Atualização de Limite de Transferência ainda não implementada."))
 
 # Botão de logout
@@ -168,6 +224,24 @@ label_valor_saque.grid(row=1, column=0)
 entry_valor_saque.grid(row=1, column=1)
 botao_confirmar_saque.grid(row=2, column=0, columnspan=2, pady=10)
 botao_voltar_saque.grid(row=3, column=0, columnspan=2, pady=10)
+
+# Posicionamento dos elementos na tela de depósito
+label_numero_conta_deposito.grid(row=0, column=0)
+entry_numero_conta_deposito.grid(row=0, column=1)
+label_valor_deposito.grid(row=1, column=0)
+entry_valor_deposito.grid(row=1, column=1)
+botao_confirmar_deposito.grid(row=2, column=0, columnspan=2, pady=10)
+botao_voltar_opcoes.grid(row=3, column=0, columnspan=2, pady=10)
+
+# Posicionamento dos elementos na tela de transferência
+label_numero_conta_origem.grid(row=0, column=0)
+entry_numero_conta_origem.grid(row=0, column=1)
+label_numero_conta_destino.grid(row=1, column=0)
+entry_numero_conta_destino.grid(row=1, column=1)
+label_valor_transferencia.grid(row=2, column=0)
+entry_valor_transferencia.grid(row=2, column=1)
+botao_confirmar_transferencia.grid(row=3, column=0, columnspan=2, pady=10)
+botao_voltar_transferencia.grid(row=4, column=0, columnspan=2, pady=10)
 
 # Posicionamento dos elementos na tela de informações do usuário
 info_usuario_label = tk.Label(janela, textvariable=nome_usuario)
