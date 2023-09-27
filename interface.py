@@ -114,6 +114,21 @@ def realizar_transferencia():
 
     messagebox.showinfo("Resultado", resultado)
     abrir_transferencia()
+    
+    # Função para abrir a tela de atualização de limite de transferência
+def abrir_atualizacao_limite():
+    esconder_opcoes()
+    tela_atualizacao_limite_frame.grid(row=1, column=0, padx=20, pady=10)
+
+# Função para atualizar o limite de transferência
+def atualizar_limite():
+    numero_conta = entry_numero_conta_limite.get()
+    novo_limite = entry_novo_limite.get()
+
+    resultado = atualizar_limite_transferencia(numero_conta, float(novo_limite))
+
+    messagebox.showinfo("Resultado", resultado)
+    abrir_atualizacao_limite()
 
 # Criar janela principal
 janela = tk.Tk()
@@ -134,6 +149,9 @@ tela_deposito_frame = tk.Frame(janela)
 
 # Frame para a tela de transferências
 tela_transferencia_frame = tk.Frame(janela)
+
+# Frame para atualizar limite de transferências
+tela_atualizacao_limite_frame = tk.Frame(janela)
 
 # Frame para mostrar as opções de funcionalidade
 botoes_opcoes_frame = tk.Frame(janela)
@@ -189,13 +207,21 @@ entry_valor_transferencia = tk.Entry(tela_transferencia_frame)
 botao_confirmar_transferencia = tk.Button(tela_transferencia_frame, text="Confirmar Transferência", command=realizar_transferencia)
 botao_voltar_transferencia = tk.Button(tela_transferencia_frame, text="Voltar", command=lambda: (tela_transferencia_frame.grid_forget(), mostrar_opcoes()))
 
+# Campos de texto e rótulos para atualização de limite de transferência
+label_numero_conta_limite = tk.Label(tela_atualizacao_limite_frame, text="Número da Conta:")
+entry_numero_conta_limite = tk.Entry(tela_atualizacao_limite_frame)
+label_novo_limite = tk.Label(tela_atualizacao_limite_frame, text="Novo Limite:")
+entry_novo_limite = tk.Entry(tela_atualizacao_limite_frame)
+botao_confirmar_limite = tk.Button(tela_atualizacao_limite_frame, text="Confirmar", command=atualizar_limite)
+botao_voltar_limite = tk.Button(tela_atualizacao_limite_frame, text="Voltar", command=lambda: (tela_atualizacao_limite_frame.grid_forget(), mostrar_opcoes()))
+botao_ajuda_limite = tk.Button(tela_atualizacao_limite_frame, text="Ajuda", command=lambda: messagebox.showinfo("Ajuda", "Digite o número da conta e o novo valor de limite desejado e clique em Confirmar para atualizar o limite de transferência."))
+
 # Botões de funcionalidade
 botao_saque = tk.Button(botoes_opcoes_frame, text="Realizar Saque", command=abrir_saque)
 botao_deposito = tk.Button(botoes_opcoes_frame, text="Realizar Depósito", command=abrir_deposito)
 botao_extrato = tk.Button(botoes_opcoes_frame, text="Exibir Extrato", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Extrato ainda não implementada."))
 botao_transferencia = tk.Button(botoes_opcoes_frame, text="Realizar Transferência", command=abrir_transferencia)
-botao_atualizar_limite = tk.Button(botoes_opcoes_frame, text="Atualizar Limite de Transferência", command=lambda: messagebox.showinfo("Aviso", "Funcionalidade de Atualização de Limite de Transferência ainda não implementada."))
-
+botao_atualizar_limite = tk.Button(botoes_opcoes_frame, text="Atualizar Limite de Transferência", command=abrir_atualizacao_limite)
 # Botão de logout
 botao_logout = tk.Button(janela, text="Logout", command=logout)
 
@@ -242,6 +268,15 @@ label_valor_transferencia.grid(row=2, column=0)
 entry_valor_transferencia.grid(row=2, column=1)
 botao_confirmar_transferencia.grid(row=3, column=0, columnspan=2, pady=10)
 botao_voltar_transferencia.grid(row=4, column=0, columnspan=2, pady=10)
+
+# Posicionamento dos elementos na tela de atualização de limite de transferência
+label_numero_conta_limite.grid(row=0, column=0)
+entry_numero_conta_limite.grid(row=0, column=1)
+label_novo_limite.grid(row=1, column=0)
+entry_novo_limite.grid(row=1, column=1)
+botao_confirmar_limite.grid(row=2, column=0, columnspan=2, pady=10)
+botao_voltar_limite.grid(row=3, column=0, columnspan=2, pady=10)
+botao_ajuda_limite.grid(row=4, column=0, columnspan=2, pady=10)
 
 # Posicionamento dos elementos na tela de informações do usuário
 info_usuario_label = tk.Label(janela, textvariable=nome_usuario)
